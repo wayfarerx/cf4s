@@ -17,6 +17,9 @@ import io.circe.JsonObject
 import io.circe.syntax._
 import zio.test._
 
+/**
+ * Test suite for input types.
+ */
 object InputTypeSpec extends ZIOSpecDefault:
 
   /** The tests that validate the supported input types. */

@@ -10,11 +10,6 @@ object Dependencies {
   lazy val CirceCore = CirceGroup %% "circe-core" % CirceVersion
   lazy val CirceParser = CirceGroup %% "circe-parser" % CirceVersion
 
-  val RefinedGroup = "eu.timepit"
-  val RefinedVersion = "0.10.3"
-  lazy val Refined = RefinedGroup %% "refined" % RefinedVersion
-  lazy val RefinedCats = RefinedGroup %% "refined-cats" % RefinedVersion
-
   lazy val Scopt = "com.github.scopt" %% "scopt" % "4.1.0"
 
   val ZioGroup = "dev.zio"

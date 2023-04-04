@@ -1,7 +1,7 @@
 import Dependencies.*
 
 ThisBuild / organization := "net.wayfarerx"
-ThisBuild / version := "0.2.1"
+ThisBuild / version := "0.2.2"
 ThisBuild / scalaVersion := "3.2.2"
 
 /** The aggregation of the projects that define cf4s. */
@@ -18,7 +18,6 @@ lazy val generator = project.settings(
     AwsCore,
     CirceCore,
     CirceParser,
-    Refined,
     Scopt,
     Zio,
     ZioLogging,
