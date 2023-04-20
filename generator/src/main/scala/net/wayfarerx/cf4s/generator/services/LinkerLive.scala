@@ -31,7 +31,7 @@ case class LinkerLive() extends Linker:
     data <- Data fromInput specification.propertyTypes
     resources <- State.foldLeft(specification.resourceTypes)(Map.empty[Id, Resource]) { (results, resourceType) =>
       for
-        resource <- LinkerLive linkResourceType resourceType
+        resource <- linkResourceType(resourceType)
         result <- if results contains resource.id then
           Linking fail new IllegalArgumentException(s"Duplicate resource definition: ${resource.id}.")
         else Linking succeed resource.id -> resource
@@ -61,13 +61,24 @@ object LinkerLive:
         name <- State lift Token.fromString(attr.name)
         _ <- if attrs contains name then
           Linking fail new IllegalArgumentException(s"Duplicate attribute definition: $name.")
-        else Linking succeed ()
+        else Linking succeed()
         attributeType <- linkAttributeType(attr._type)
       yield attrs + (name -> attributeType)
     }
     properties <- linkProperties(resourceType.properties)
+    components <- State.foldLeft(attributes.keySet ++ properties.keySet) {
+      Map.empty[Token, Either[Type.Attribute, Property]]
+    } { (results, key) =>
+      attributes.get(key) -> properties.get(key) match
+        case Some(attribute) -> None =>
+          Linking succeed results + (key -> Left(attribute))
+        case None -> Some(property) =>
+          Linking succeed results + (key -> Right(property))
+        case _ =>
+          for result <- Linking fail new IllegalArgumentException(s"Duplicate component definition: $key.") yield result
+    }
     _ <- Linking.pop
-  yield Resource(id, resourceType.documentation, attributes, properties)
+  yield Resource(id, resourceType.documentation, components)
 
   /**
    * Links the input property type found when searching for the specified name.
@@ -101,7 +112,7 @@ object LinkerLive:
         propertyName <- State lift Token.fromString(inputProperty.name)
         _ <- if properties contains propertyName then
           Linking fail new IllegalArgumentException(s"Duplicate property definition: $propertyName.")
-        else Linking succeed ()
+        else Linking succeed()
         propertyType <- linkType(inputProperty._type)
       yield properties + (propertyName -> Property(
         propertyType,
@@ -158,7 +169,7 @@ object LinkerLive:
    * @param stack         The stack of names that the linker is linking.
    * @param definitions   The types defined by the linker.
    */
-  private case class Data (
+  private case class Data(
     propertyTypes: Map[Name, InputPropertyType] = Map.empty,
     stack: List[Either[Id, Name]] = Nil,
     definitions: Map[Name, Type.Definition] = Map.empty

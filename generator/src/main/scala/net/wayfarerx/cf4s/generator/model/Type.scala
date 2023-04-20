@@ -89,6 +89,5 @@ object Type:
    * @param documentation The link to the documentation for this type.
    * @param properties    The properties to define on this type.
    */
-  case class Definition(name: Name, documentation: String, properties: collection.immutable.Map[Token, Property])
-    extends Item
+  case class Definition(name: Name, documentation: String, properties: collection.Map[Token, Property]) extends Item
 

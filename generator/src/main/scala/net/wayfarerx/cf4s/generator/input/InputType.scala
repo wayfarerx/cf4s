@@ -122,13 +122,6 @@ object InputType:
   case object Json extends InputType
 
   /**
-   * A reference to a defined non-primitive input type.
-   *
-   * @param name The name of the type.
-   */
-  case class Defined(name: String) extends InputType
-
-  /**
    * The "List" non-primitive input type.
    *
    * @param item The type of items in this list.
@@ -141,3 +134,10 @@ object InputType:
    * @param item The type of values in this map.
    */
   case class Map(item: InputType) extends InputType
+
+  /**
+   * A reference to a defined non-primitive input type.
+   *
+   * @param name The name of the type.
+   */
+  case class Defined(name: String) extends InputType
