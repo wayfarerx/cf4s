@@ -14,8 +14,9 @@ package net.wayfarerx.cf4s.generator
 package input
 
 import io.circe.JsonObject
-import io.circe.syntax._
-import zio.test._
+import io.circe.syntax.*
+
+import zio.test.*
 
 /**
  * Test suite for input properties.
@@ -40,7 +41,7 @@ object InputPropertySpec extends ZIOSpecDefault:
       ).asJson
       assertTrue(InputProperty.decodeAll(json.hcursor) == Right(Seq(
         InputProperty("First", InputType.String, true, "first"),
-        InputProperty("Second", InputType.Named("Named"), false, "second")
+        InputProperty("Second", InputType.Defined("Named"), false, "second")
       )))
     }
 

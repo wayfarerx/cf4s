@@ -24,75 +24,71 @@ sealed trait Type
 object Type:
 
   /**
-   * Base type for primitive types.
+   * Base type for attribute types.
    */
-  sealed trait Primitive extends Type
-
-  /**
-   * Base type for non-primitive types.
-   */
-  sealed trait Complex extends Type
+  sealed trait Attribute extends Type
 
   /**
    * Base type for item types.
    */
-  sealed trait Item extends Type
+  sealed trait Item extends Attribute
 
   /**
-   * The "Boolean" primitive and item type.
+   * The "Boolean" type.
    */
-  case object Boolean extends Primitive with Item
+  case object Boolean extends Item
 
   /**
-   * The "Integer" primitive and item type.
+   * The "Integer" type.
    */
-  case object Integer extends Primitive with Item
+  case object Integer extends Item
 
   /**
-   * The "Long" primitive and item type.
+   * The "Long" type.
    */
-  case object Long extends Primitive with Item
+  case object Long extends Item
 
   /**
-   * The "Double" primitive and item type.
+   * The "Double" type.
    */
-  case object Double extends Primitive with Item
+  case object Double extends Item
 
   /**
-   * The "Timestamp" primitive and item type.
+   * The "String" type.
    */
-  case object Timestamp extends Primitive with Item
+  case object String extends Item
 
   /**
-   * The "String" primitive and item type.
+   * The "Timestamp" type.
    */
-  case object String extends Primitive with Item
+  case object Timestamp extends Item
 
   /**
-   * The "Json" primitive type.
+   * The "Json" type.
    */
-  case object Json extends Primitive
+  case object Json extends Attribute
 
   /**
-   * The "List" non-primitive type.
+   * The "List" type.
    *
    * @param item The type of items in this list.
    */
-  case class List(item: Item) extends Complex
+  case class List(item: Item) extends Attribute
 
   /**
-   * The "Map" non-primitive type.
+   * The "Map" type.
    *
    * @param item The type of values in this map.
    */
-  case class Map(item: Item) extends Complex
+  case class Map(item: Item) extends Type
 
   /**
    * A type definition with properties.
    *
-   * @param name          The name of this type definition.
+   * @param name          The name of this type.
    * @param documentation The link to the documentation for this type.
    * @param properties    The properties to define on this type.
    */
-  case class Definition(name: Name, documentation: String, properties: Seq[Property]) extends Complex with Item
+  case class Definition(name: Name, documentation: String, properties: collection.immutable.Map[Token, Property])
+    extends Item
 

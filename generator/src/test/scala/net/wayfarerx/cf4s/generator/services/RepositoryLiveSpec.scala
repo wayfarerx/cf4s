@@ -1,4 +1,4 @@
-/* TokenSpec.scala
+/* RepositoryLiveSpec.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,25 +11,24 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package model
+package services
 
+import zio.ZLayer
 import zio.test.*
 
 /**
- * Test suite for tokens.
+ * Test suite for live repository services.
  */
-object TokenSpec extends ZIOSpecDefault:
+object RepositoryLiveSpec extends ZIOSpecDefault:
 
-  /** The tests that validate tokens. */
-  override def spec: Spec[Any, Throwable] = suite(classOf[Token].getName)(
+  /** The tests that validate repositories. */
+  override def spec: Spec[Any, Throwable] = suite(classOf[RepositoryLive].getName)(
 
-    test("Represents strings that are valid tokens.") {
+    test("Loads specifications from the repository.") {
       for
-        token1 <- Token fromString "aB0_"
-        token2 <- Token fromString "C_1d"
-        result <- assertTrue(token1.value == "aB0_") &&
-          assertTrue(token2.toString == "C_1d")
+        specifications <- Repository.load("S3BucketSpecification")
+        result <- assertTrue(specifications.size == 1) && assertTrue(specifications.head._1 == "S3BucketSpecification")
       yield result
-    }
+    } provide ZLayer.make[Repository](ConfigurationLiveSpec.layer, RepositoryLive.layer)
 
   )

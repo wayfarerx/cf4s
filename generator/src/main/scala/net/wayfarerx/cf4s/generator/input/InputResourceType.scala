@@ -18,13 +18,13 @@ import io.circe.{Decoder, HCursor}
 /**
  * Definition of an input resource type.
  *
- * @param name          The name of this resource type.
+ * @param id            The ID of this resource type.
  * @param documentation The link to the documentation for this resource type.
  * @param attributes    The attributes of this resource type.
  * @param properties    The properties of this resource type.
  */
 case class InputResourceType(
-  name: String,
+  id: String,
   documentation: String,
   attributes: Seq[InputAttribute],
   properties: Seq[InputProperty]

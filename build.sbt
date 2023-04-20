@@ -20,14 +20,15 @@ lazy val generator = project.settings(
     CirceParser,
     Scopt,
     Zio,
+    ZioInteropCats,
     ZioLogging,
     ZioTest,
     ZioTestSbt,
     ZioTestMagnolia
   ),
-  testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
-  Compile / run / fork := true,
-  mainClass := Some("net.wayfarerx.cf4s.generator.main.Main")
+  testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")//,
+  //Compile / run / fork := true,
+  //mainClass := Some("net.wayfarerx.cf4s.generator.main.Main")
 )
 
 /** The common model for cf4s. */

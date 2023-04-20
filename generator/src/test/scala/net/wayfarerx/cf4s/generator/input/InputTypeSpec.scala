@@ -14,8 +14,9 @@ package net.wayfarerx.cf4s.generator
 package input
 
 import io.circe.JsonObject
-import io.circe.syntax._
-import zio.test._
+import io.circe.syntax.*
+
+import zio.test.*
 
 /**
  * Test suite for input types.
@@ -44,9 +45,9 @@ object InputTypeSpec extends ZIOSpecDefault:
         assertTrue(decodeComplex(`List`, Some(`String`)) == Right(InputType.List(InputType.String))) &&
         assertTrue(decodeComplex(`Map`, Some(`Timestamp`)) == Right(InputType.Map(InputType.Timestamp))) &&
         assertTrue(decodeComplex(`List`, Some("Invalid")).isLeft) &&
-        assertTrue(decodeComplex(`Map`, itemType = Some("Named")) == Right(InputType.Map(InputType.Named("Named")))) &&
+        assertTrue(decodeComplex(`Map`, itemType = Some("Named")) == Right(InputType.Map(InputType.Defined("Named")))) &&
         assertTrue(decodeComplex(`List`).isLeft) &&
-        assertTrue(decodeComplex("Named") == Right(InputType.Named("Named")))
+        assertTrue(decodeComplex("Named") == Right(InputType.Defined("Named")))
     },
 
     test("Requires type information.") {

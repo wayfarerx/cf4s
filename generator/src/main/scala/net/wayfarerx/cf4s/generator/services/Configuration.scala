@@ -1,4 +1,4 @@
-/* Attribute.scala
+/* Configuration.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,12 +11,24 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package model
+package services
+
+import java.net.URL
+
+import zio.{UIO, URIO, ZIO}
 
 /**
- * Definition of an attribute.
- *
- * @param name  The name of this attribute.
- * @param _type The type of this attribute.
+ * The configuration service.
  */
-case class Attribute(name: Token, _type: Type)
+trait Configuration:
+
+  /** The URL where the specification ZIP file can be found. */
+  def specificationsUrl: UIO[URL]
+
+/**
+ * Accessor for the environment's configuration service.
+ */
+object Configuration:
+
+  /** The URL where the specification ZIP file can be found. */
+  def specificationsUrl: URIO[Configuration, URL] = ZIO serviceWithZIO (_.specificationsUrl)

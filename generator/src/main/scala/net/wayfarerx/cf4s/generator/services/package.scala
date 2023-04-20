@@ -1,4 +1,4 @@
-/* Property.scala
+/* package.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,13 +11,7 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package model
+package services
 
-/**
- * Definition of a property.
- *
- * @param _type         The type of this property.
- * @param required      True if this property is required.
- * @param documentation The link to the documentation for this property.
- */
-case class Property(_type: Type, required: Boolean, documentation: String)
+/** The ".json" constant. */
+private[services] val `.json` = ".json"

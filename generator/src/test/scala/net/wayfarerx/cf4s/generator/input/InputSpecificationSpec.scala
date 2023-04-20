@@ -13,8 +13,9 @@
 package net.wayfarerx.cf4s.generator.input
 
 import io.circe.JsonObject
-import io.circe.syntax._
-import zio.test._
+import io.circe.syntax.*
+
+import zio.test.*
 
 /**
  * Test suite for input specifications.

@@ -27,169 +27,117 @@ object InputType:
 
   /** The given JSON decoder for input types. */
   given Decoder[InputType] = Decoder instance { cursor =>
-    cursor.downField(`PrimitiveType`).success match
-      case Some(primitiveType) =>
-        Primitive.decode(primitiveType)
-      case None =>
-        cursor.downField(`Type`).success match
-          case Some(complexType) => Complex.decode(
-            complexType,
-            cursor.downField(`PrimitiveItemType`),
-            cursor.downField(`ItemType`)
-          )
-          case None => Left(DecodingFailure(
-            DecodingFailure.Reason.CustomReason("Input type information not found."),
-            cursor
-          ))
+    for
+      _type <- decodeType(cursor)
+      orPrimitive <- _type.fold(decodePrimitiveType(cursor))(Right apply Some(_))
+      result <- orPrimitive.fold[Decoder.Result[InputType]](Left(
+        DecodingFailure(DecodingFailure.Reason.CustomReason("Input type information not found."), cursor)
+      ))(Right(_))
+    yield result
   }
 
-  /**
-   * Base type for item input types.
-   */
-  sealed trait Item extends InputType
+  private[this] def decodeType(cursor: HCursor): Decoder.Result[Option[InputType]] =
+    cursor.downField(`Type`).success.fold(Right(None)) { _type =>
+      for
+        name <- _type.as[String]
+        result <- name match
+          case container @ (input.`List` | input.`Map`) =>
+            for
+              itemType <- decodeItemType(cursor)
+              orPrimitiveItemType <- itemType.fold(decodePrimitiveItemType(cursor))(Right apply Some(_))
+              item <- orPrimitiveItemType.fold[Decoder.Result[InputType]](Left(
+                DecodingFailure(DecodingFailure.Reason.CustomReason("Input item type information not found."), cursor)
+              ))(Right(_))
+            yield container match
+              case input.`List` => Some(List(item))
+              case input.`Map` => Some(Map(item))
+          case defined =>
+            Right(Some(Defined(defined)))
+      yield result
+    }
 
-  /**
-   * Support for item input types.
-   */
-  private object Item:
+  private[this] def decodePrimitiveType(cursor: HCursor): Decoder.Result[Option[InputType]] =
+    cursor.downField(`PrimitiveType`).success.fold(Right(None)) { primitiveType =>
+      for name <- primitiveType.as[String] yield name match
+        case input.`Boolean` => Some(Boolean)
+        case input.`Integer` => Some(Integer)
+        case input.`Long` => Some(Long)
+        case input.`Double` => Some(Double)
+        case input.`String` => Some(String)
+        case input.`Timestamp` => Some(Timestamp)
+        case input.`Json` => Some(Json)
+        case _ => None
+    }
 
-    /**
-     * Decodes an item input type from the from the specified cursors.
-     *
-     * @param cursor          The cursor pointing at the type container.
-     * @param primitiveCursor The cursor pointing at the primitive item input type.
-     * @param complexCursor   The cursor pointing at the non-primitive item input type.
-     * @return The decoded item input type.
-     */
-    private[InputType] def decode(cursor: HCursor, primitiveCursor: ACursor, complexCursor: ACursor) =
-      primitiveCursor.success match
-        case Some(primitive) => primitive.as[String] flatMap {
-          case input.`Boolean` => Right(Boolean)
-          case input.`Integer` => Right(Integer)
-          case input.`Long` => Right(Long)
-          case input.`Double` => Right(Double)
-          case input.`String` => Right(String)
-          case input.`Timestamp` => Right(Timestamp)
-          case invalid => Left(DecodingFailure(
-            DecodingFailure.Reason.CustomReason(s"Invalid primitive item input type: $invalid."),
-            primitiveCursor
-          ))
-        }
-        case None => complexCursor.success match
-          case Some(complex) => complex.as[String] map Named.apply
-          case None => Left(DecodingFailure(
-            DecodingFailure.Reason.CustomReason("Item input type information not found."),
-            cursor
-          ))
+  private[this] def decodeItemType(cursor: HCursor): Decoder.Result[Option[InputType]] =
+    cursor.downField(`ItemType`).success.fold(Right(None)) { itemType =>
+      for name <- itemType.as[String] yield Some(Defined(name))
+    }
 
-  /**
-   * Base type for primitive input types.
-   */
-  sealed trait Primitive extends InputType
-
-  /**
-   * Definition of the supported primitive input types.
-   */
-  private object Primitive:
-
-    /**
-     * Decodes a primitive input type from the from the specified cursor.
-     *
-     * @param cursor The cursor pointing to an object containing type information.
-     * @return The decoded primitive input type.
-     */
-    private[InputType] def decode(cursor: HCursor) =
-      cursor.as[String] flatMap {
-        case input.`Boolean` => Right(Boolean)
-        case input.`Integer` => Right(Integer)
-        case input.`Long` => Right(Long)
-        case input.`Double` => Right(Double)
-        case input.`String` => Right(String)
-        case input.`Timestamp` => Right(Timestamp)
-        case input.`Json` => Right(Json)
-        case invalid => Left(DecodingFailure(
-          DecodingFailure.Reason.CustomReason(s"Invalid primitive input type: $invalid."),
-          cursor
-        ))
-      }
-
-  /**
-   * Base type for non-primitive input types.
-   */
-  sealed trait Complex extends InputType
-
-  /**
-   * Definition of the supported non-primitive input types.
-   */
-  private object Complex:
-
-    /**
-     * Decodes a non-primitive input type from the from the specified cursor.
-     *
-     * @param cursor          The cursor pointing to an object containing type information.
-     * @param primitiveCursor A cursor pointing to the primitive item input type.
-     * @param complexCursor   A cursor pointing to the non-primitive item input type.
-     * @return The decoded non-primitive input type.
-     */
-    private[InputType] def decode(cursor: HCursor, primitiveCursor: ACursor, complexCursor: ACursor) =
-      cursor.as[String] flatMap {
-        case input.`List` => Item.decode(cursor, primitiveCursor, complexCursor) map List.apply
-        case input.`Map` => Item.decode(cursor, primitiveCursor, complexCursor) map Map.apply
-        case typeName => Right(Named(typeName))
-      }
+  private[this] def decodePrimitiveItemType(cursor: HCursor): Decoder.Result[Option[InputType]] =
+    cursor.downField(`PrimitiveItemType`).success.fold(Right(None)) { primitiveItemType =>
+      for name <- primitiveItemType.as[String] yield name match
+        case input.`Boolean` => Some(Boolean)
+        case input.`Integer` => Some(Integer)
+        case input.`Long` => Some(Long)
+        case input.`Double` => Some(Double)
+        case input.`String` => Some(String)
+        case input.`Timestamp` => Some(Timestamp)
+        case _ => None
+    }
 
   /**
    * The "Boolean" primitive input type.
    */
-  case object Boolean extends Primitive with Item
+  case object Boolean extends InputType
 
   /**
    * The "Integer" primitive input type.
    */
-  case object Integer extends Primitive with Item
+  case object Integer extends InputType
 
   /**
    * The "Long" primitive input type.
    */
-  case object Long extends Primitive with Item
+  case object Long extends InputType
 
   /**
    * The "Double" primitive input type.
    */
-  case object Double extends Primitive with Item
+  case object Double extends InputType
 
   /**
    * The "Timestamp" primitive input type.
    */
-  case object Timestamp extends Primitive with Item
+  case object Timestamp extends InputType
 
   /**
    * The "String" primitive input type.
    */
-  case object String extends Primitive with Item
+  case object String extends InputType
 
   /**
    * The "Json" primitive input type.
    */
-  case object Json extends Primitive
+  case object Json extends InputType
+
+  /**
+   * A reference to a defined non-primitive input type.
+   *
+   * @param name The name of the type.
+   */
+  case class Defined(name: String) extends InputType
 
   /**
    * The "List" non-primitive input type.
    *
    * @param item The type of items in this list.
    */
-  case class List(item: Item) extends Complex
+  case class List(item: InputType) extends InputType
 
   /**
    * The "Map" non-primitive input type.
    *
    * @param item The type of values in this map.
    */
-  case class Map(item: Item) extends Complex
-
-  /**
-   * A reference to a named non-primitive input type.
-   *
-   * @param name The name of the type.
-   */
-  case class Named(name: String) extends Complex with Item
+  case class Map(item: InputType) extends InputType

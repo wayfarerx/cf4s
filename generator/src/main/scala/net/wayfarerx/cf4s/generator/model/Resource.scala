@@ -16,9 +16,14 @@ package model
 /**
  * Definition of a resource.
  *
- * @param name          The name of this resource.
+ * @param id            The ID of this resource.
  * @param documentation The link to the documentation for this resource.
  * @param attributes    The attributes of this resource.
  * @param properties    The properties of this resource.
  */
-case class Resource(name: Id, documentation: String, attributes: Seq[Attribute], properties: Seq[Property])
+case class Resource(
+  id: Id,
+  documentation: String,
+  attributes: Map[Token, Type.Attribute],
+  properties: Map[Token, Property]
+)
