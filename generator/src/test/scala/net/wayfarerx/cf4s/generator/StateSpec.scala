@@ -16,9 +16,12 @@ import zio.ZIO
 import zio.interop.catz.*
 import zio.test.*
 
+/**
+ * Test suite for ZIO states.
+ */
 object StateSpec extends ZIOSpecDefault:
 
-  /** The tests that validate tokens. */
+  /** The tests that validate ZIO states. */
   override def spec: Spec[Any, Throwable] = suite(classOf[State.type].getName)(
 
     test("Passes state data between calls") {

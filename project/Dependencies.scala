@@ -1,6 +1,8 @@
 import sbt.*
 object Dependencies {
 
+  // Compile Dependencies
+
   val AwsGroup = "com.amazonaws"
   val AwsVersion = "1.12.429"
   lazy val AwsCore = AwsGroup % "aws-java-sdk-core" % AwsVersion
@@ -17,6 +19,11 @@ object Dependencies {
   lazy val Zio = ZioGroup %% "zio" % ZioVersion
   lazy val ZioInteropCats = ZioGroup %% "zio-interop-cats" % "23.0.0.1"
   lazy val ZioLogging = ZioGroup %% "zio-logging" % "2.1.11"
+
+  // Test Dependencies
+
+  lazy val ScalaTest = "org.scalatest" %% "scalatest" % "3.2.15" % Test
+
   lazy val ZioTest = ZioGroup %% "zio-test" % ZioVersion % Test
   lazy val ZioTestSbt = ZioGroup %% "zio-test-sbt" % ZioVersion % Test
   lazy val ZioTestMagnolia = ZioGroup %% "zio-test-magnolia" % ZioVersion % Test
