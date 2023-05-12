@@ -1,7 +1,7 @@
 import Dependencies.*
 
 ThisBuild / organization := "net.wayfarerx"
-ThisBuild / version := "0.2.3"
+ThisBuild / version := "0.2.4"
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / scalacOptions += "-feature"
 

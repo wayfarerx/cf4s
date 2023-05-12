@@ -19,6 +19,7 @@ import io.circe.{Encoder, Json}
  *
  * @tparam A The type of data this parameter accepts.
  * @param logicalName           The logical name of this parameter in the template.
+ * @param description           A string of up to 4000 characters that describes this parameter.
  * @param default               A value of the appropriate type to use if no value is specified when a stack is created.
  * @param allowedValues         An array containing the list of values allowed for this parameter.
  * @param allowedPattern        A regular expression that represents the patterns to allow for String or Strings types.
@@ -26,12 +27,12 @@ import io.circe.{Encoder, Json}
  * @param maxValue              The largest numeric value you want to allow for Number types.
  * @param minLength             The smallest number of characters you want to allow for String types.
  * @param maxLength             The largest number of characters you want to allow for String types.
- * @param noEcho                Whether to mask the parameter value to prevent it from being displayed.
  * @param constraintDescription A string that explains a constraint when the constraint is violated.
- * @param description           A string of up to 4000 characters that describes this parameter.
+ * @param noEcho                Whether to mask the parameter value to prevent it from being displayed.
  */
 case class Parameter[A: Encoder : Parameter.Type](
   logicalName: String,
+  description: String = "",
   default: Option[A] = None,
   allowedValues: Seq[A] = Seq.empty,
   allowedPattern: String = "",
@@ -39,14 +40,14 @@ case class Parameter[A: Encoder : Parameter.Type](
   maxValue: Option[A] = None,
   minLength: Option[Int] = None,
   maxLength: Option[Int] = None,
-  noEcho: Option[Boolean] = None,
   constraintDescription: String = "",
-  description: String = ""
+  noEcho: Option[Boolean] = None
 ) extends Named:
 
   /* Attempt to render the content of this parameter. */
   override def render: Option[Json] = Entry.render(
     Entry("Type", summon[Parameter.Type[A]]),
+    Entry.string("Description", description),
     Entry.option("Default", default),
     Entry.seq("AllowedValues", allowedValues),
     Entry.string("AllowedPattern", allowedPattern),
@@ -54,9 +55,8 @@ case class Parameter[A: Encoder : Parameter.Type](
     Entry.option("MaxValue", maxValue),
     Entry.option("MinLength", minLength),
     Entry.option("MaxLength", maxLength),
-    Entry.option("NoEcho", noEcho),
     Entry.string("ConstraintDescription", constraintDescription),
-    Entry.string("Description", description)
+    Entry.option("NoEcho", noEcho)
   )
 
 /**
