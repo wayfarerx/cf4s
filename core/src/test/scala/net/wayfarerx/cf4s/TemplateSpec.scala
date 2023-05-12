@@ -23,7 +23,33 @@ import org.scalatest.matchers.should.*
  */
 class TemplateSpec extends AnyFlatSpec with Matchers:
 
-  "Template" should "render the AWS template format version" in {
-    Template().asJson shouldBe Json.obj("AWSTemplateFormatVersion" -> "2010-09-09".asJson)
-    new Template.Builder {}.build.asJson shouldBe Json.obj("AWSTemplateFormatVersion" -> "2010-09-09".asJson)
+  private val AWSTemplateFormatVersion = "AWSTemplateFormatVersion" -> "2010-09-09".asJson
+
+  "Template" should "build empty templates" in {
+    new Template.Builder{}.build shouldBe Template()
+  }
+
+  it should "render the components of templates" in {
+    new Template.Builder {
+
+      override def description: String = "D"
+
+      override def parameters: Seq[Parameter[_]] = super.parameters :+ Parameter[Int]("P")
+
+      override def resources: Seq[Resource] = super.resources :+ new Resource:
+
+        override def logicalName: String = "R"
+
+        override def resourceType: String = "RT"
+
+        override def resourceProperties: Option[Json] = None
+
+    }.build.asJson shouldBe Json.obj(
+      AWSTemplateFormatVersion,
+      "Description" -> "D".asJson,
+      "Parameters" -> Json.obj("P" -> Json.obj("Type" -> "Number".asJson)),
+      "Resources" -> Json.obj("R" -> Json.obj(
+        "Type" -> "RT".asJson
+      ))
+    )
   }

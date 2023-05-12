@@ -12,17 +12,28 @@
 
 package net.wayfarerx.cf4s
 
-import io.circe.{Encoder, Json}
+import io.circe.Encoder
 import io.circe.syntax.*
 
+/**
+ * Represents a template that can be configured when creating or updating a CloudFormation stack.
+ *
+ * @param description A string that is between 0 and 1024 bytes in length that describes this template.
+ * @param parameters  The parameters used to customize this template.
+ * @param resources   The resources that are included in this template.
+ */
 case class Template(
   description: String = "",
   parameters: Seq[Parameter[_]] = Seq.empty,
   resources: Seq[Resource] = Seq.empty
 )
 
+/**
+ * Definitions associated with templates.
+ */
 object Template:
 
+  /** The given encoder for templates. */
   given Encoder[Template] = Encoder instance { template =>
     Entry.render(
       Entry("AWSTemplateFormatVersion", "2010-09-09"),
@@ -32,12 +43,19 @@ object Template:
     ).get
   }
 
+  /**
+   * The abstract builder for templates.
+   */
   trait Builder:
 
+    /** A string that is between 0 and 1024 bytes in length that describes the template. */
     protected def description: String = ""
 
+    /** The parameters used to customize the template. */
     protected def parameters: Seq[Parameter[_]] = Seq.empty
 
+    /** The resources that are included in the template. */
     protected def resources: Seq[Resource] = Seq.empty
 
+    /** Builds a template from the contents of this builder. */
     final def build: Template = Template(description, parameters, resources)

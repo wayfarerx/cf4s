@@ -15,7 +15,7 @@ package net.wayfarerx.cf4s
 import io.circe.{Encoder, Json}
 
 /**
- * Declares a parameter that may be customized when creating or updating a CloudFormation stack.
+ * Represents a parameter that can be configured when creating or updating a CloudFormation stack.
  *
  * @tparam A The type of data this parameter accepts.
  * @param logicalName           The logical name of this parameter in the template.
