@@ -3,8 +3,11 @@ object Dependencies {
 
   // Compile Dependencies
 
+  val ApacheCommonsGroup = "org.apache.commons"
+  lazy val ApacheCommonsText = ApacheCommonsGroup % "commons-text" % "1.10.0"
+
   val AwsGroup = "com.amazonaws"
-  val AwsVersion = "1.12.429"
+  val AwsVersion = "1.12.472"
   lazy val AwsCore = AwsGroup % "aws-java-sdk-core" % AwsVersion
 
   val CirceGroup = "io.circe"
@@ -15,10 +18,10 @@ object Dependencies {
   lazy val Scopt = "com.github.scopt" %% "scopt" % "4.1.0"
 
   val ZioGroup = "dev.zio"
-  val ZioVersion = "2.0.10"
+  val ZioVersion = "2.0.13"
   lazy val Zio = ZioGroup %% "zio" % ZioVersion
-  lazy val ZioInteropCats = ZioGroup %% "zio-interop-cats" % "23.0.0.1"
-  lazy val ZioLogging = ZioGroup %% "zio-logging" % "2.1.11"
+  lazy val ZioInteropCats = ZioGroup %% "zio-interop-cats" % "23.0.03"
+  lazy val ZioLogging = ZioGroup %% "zio-logging" % "2.1.12"
 
   // Test Dependencies
 

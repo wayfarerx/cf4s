@@ -59,22 +59,22 @@ object Entry:
    * Attempts to create an entry from a name and a non-empty sequence of values.
    *
    * @tparam A The type of value to encode.
-   * @param name   The name of the entry to return.
-   * @param seq The non-empty sequence of values to encode in the entry.
+   * @param name The name of the entry to return.
+   * @param seq  The non-empty sequence of values to encode in the entry.
    * @return The result of attempting to create an entry from a name and a non-empty sequence of values.
    */
   def seq[A: Encoder](name: String, seq: Seq[A]): Option[Entry] =
     Option(seq) filterNot (_.isEmpty) map (name -> _.asJson)
 
   /**
-   * Attempts to create an entry from a name and a non-empty collection of entries.
+   * Attempts to create an entry from a component.
    *
-   * @param name   The name of the entry to return.
-   * @param collection The non-empty collection of entries to encode in the entry.
-   * @return The result of attempting to create an entry from a name and a non-empty collection of entries.
+   * @param name      The name of the entry to return.
+   * @param component The optional component to create an entry from.
+   * @return The result of attempting to create an entry from a component.
    */
-  def collection(name: String, collection: Option[Entry]*): Option[Entry] =
-    Option(collection) flatMap (render(_ *)) map (name -> _)
+  def component(name: String, component: Option[Component]): Option[Entry] =
+    Option(component).flatten flatMap (_.render map (name -> _))
 
   /**
    * Attempts to create an entry from a named component.
@@ -84,6 +84,16 @@ object Entry:
    */
   def named(named: Named): Option[Entry] =
     Option(named) flatMap (_.render map (named.logicalName -> _))
+
+  /**
+   * Attempts to create an entry from a name and a non-empty collection of entries.
+   *
+   * @param name       The name of the entry to return.
+   * @param collection The non-empty collection of entries to encode in the entry.
+   * @return The result of attempting to create an entry from a name and a non-empty collection of entries.
+   */
+  def collection(name: String, collection: Option[Entry]*): Option[Entry] =
+    Option(collection) flatMap (render(_ *)) map (name -> _)
 
   /**
    * Attempts to render JSON from a non-empty collection of entries.

@@ -1,4 +1,4 @@
-/* Named.scala
+/* Component.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -12,12 +12,17 @@
 
 package net.wayfarerx.cf4s
 
-import io.circe.{Encoder, Json}
+import io.circe.Json
 
 /**
- * Base type for named components in a template.
+ * Base type for components in a template.
  */
-trait Named extends Component:
+trait Component:
 
-  /** The logical name of this component. */
-  def logicalName: String
+  /**
+   * Attempts to render the content of this component.
+   *
+   * @return The result of attempting to render content of this component.
+   */
+  def render: Option[Json]
+  

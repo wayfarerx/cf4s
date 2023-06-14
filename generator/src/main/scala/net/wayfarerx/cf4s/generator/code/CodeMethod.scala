@@ -1,4 +1,4 @@
-/* TokenSpec.scala
+/* CodeMethod.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,25 +11,19 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package model
+package code
 
-import zio.test.*
+import org.apache.commons.text.WordUtils
 
 /**
- * Test suite for tokens.
+ * A method that will be defined in code.
+ *
+ * @param name The capitalized name of this method.
+ * @param methodType The type this method returns.
  */
-object TokenSpec extends ZIOSpecDefault:
+case class CodeMethod(name: String, methodType: String):
 
-  /** The tests that validate tokens. */
-  override def spec: Spec[Any, Throwable] = suite(classOf[Token].getName)(
+  /** The name of this method in code. */
+  lazy val methodName: String = WordUtils uncapitalize name
 
-    test("Represents strings that are valid tokens.") {
-      for
-        token1 <- Token fromString "aB0_"
-        token2 <- Token fromString "C_1d"
-        result <- assertTrue(token1.value == "aB0_") &&
-          assertTrue(token2.toString == "C_1d")
-      yield result
-    }
 
-  )

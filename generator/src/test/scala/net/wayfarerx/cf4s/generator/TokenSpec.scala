@@ -1,4 +1,4 @@
-/* Named.scala
+/* TokenSpec.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -10,14 +10,25 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package net.wayfarerx.cf4s
+package net.wayfarerx.cf4s.generator
 
-import io.circe.{Encoder, Json}
+import zio.test.*
 
 /**
- * Base type for named components in a template.
+ * Test suite for tokens.
  */
-trait Named extends Component:
+object TokenSpec extends ZIOSpecDefault:
 
-  /** The logical name of this component. */
-  def logicalName: String
+  /** The tests that validate tokens. */
+  override def spec: Spec[Any, Throwable] = suite(classOf[Token].getName)(
+
+    test("Represents strings that are valid tokens.") {
+      for
+        token1 <- Token fromString "aB0_"
+        token2 <- Token fromString "C_1d"
+        result <- assertTrue(token1.value == "aB0_") &&
+          assertTrue(token2.toString == "C_1d")
+      yield result
+    }
+
+  )

@@ -1,0 +1,66 @@
+@***********************************************************************************************************************
+ * Template for generating CloudFormation classes.                                                                     *
+ *                                                                                                                     *
+ * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).                                                                    *
+ *                                                                                                                     *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with *
+ * the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.                    *
+ *                                                                                                                     *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on *
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the  *
+ * specific language governing permissions and limitations under the License.                                          *
+ *                                                                                                                     *
+ * @param cls The code to generate the class from.                                                                    *
+ **********************************************************************************************************************@
+ @(cls: CodeClass)
+/**
+ * @cls.documentation.fold(cls.name)(doc => s"@@see $doc")
+ *
+ * @cls.resourceType.map(_ => "@@param logicalName The logical name of this resource.")
+ * @for(field <- cls.fields) {
+ *   @@param @field.name @field.documentation.getOrElse(field.fieldType)
+ * }
+ */
+case class @cls.name (
+  @cls.resourceType.fold("")(_ => s"logicalName: String @if(cls.fields.nonEmpty) { , }")
+  @for((field, index) <- cls.fields.zipWithIndex) {
+    @field.fieldName: @if(field.required) { @field.fieldType } else { Option[@field.fieldType] = None }
+     @if(index < cls.fields.size - 1) { , }
+  }
+) extends @cls.resourceType.fold("net.wayfarerx.cf4s.Component")(_ => "net.wayfarerx.cf4s.Resource") {
+
+  @rendering() = {
+    @if(cls.fields.isEmpty) { None } else {
+      net.wayfarerx.cf4s.Entry.render(
+        @for((field, index) <- cls.fields.zipWithIndex) {
+          @field.fieldType match {
+            
+            case _ if !field.required => net.wayfarerx.cf4s.Entry.option("@field.name", @field.fieldName)
+            case "String" => net.wayfarerx.cf4s.Entry.string("@field.name", @field.fieldName)
+            case _ => net.wayfarerx.cf4s.Entry.apply("@field.name", @field.fieldName)
+          }
+          @if(index < cls.fields.size - 1) { , }
+        }
+      )
+    }
+  }
+
+  @if(cls.resourceType.isEmpty) {
+
+    override def render: Option[io.circe.Json] = @rendering()
+
+  } else {
+
+    @for(method <- cls.methods) {
+      /** Returns the "@method.name" attribute. */
+      def @method.methodName: net.wayfarerx.cf4s.Data[@method.methodType] =
+        net.wayfarerx.cf4s.Fn.getAtt(logicalName, "@method.name")
+    }
+
+    override def resourceType: String = "@cls.resourceType"
+
+    override def resourceProperties: Option[io.circe.Json] = @rendering()
+
+  }
+
+}

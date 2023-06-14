@@ -11,7 +11,6 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package model
 
 import zio.{Task, ZIO}
 
