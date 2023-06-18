@@ -1,4 +1,4 @@
-/* Named.scala
+/* CodeMethod.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -10,14 +10,18 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package net.wayfarerx.cf4s
-
-import io.circe.{Encoder, Json}
+package net.wayfarerx.cf4s.generator
+package code
 
 /**
- * Base type for named components in a template.
+ * A method that will be defined in code.
+ *
+ * @param name       The capitalized name of this method.
+ * @param methodType The type this method returns.
  */
-trait Named extends Component:
+case class CodeMethod(name: String, methodType: String):
 
-  /** The logical name of this component. */
-  def logicalName: String
+  /** The name of this method in code. */
+  lazy val methodName: String = decapitalize(name)
+
+

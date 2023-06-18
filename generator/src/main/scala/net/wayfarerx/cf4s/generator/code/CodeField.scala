@@ -1,4 +1,4 @@
-/* Named.scala
+/* CodeField.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -10,14 +10,23 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package net.wayfarerx.cf4s
-
-import io.circe.{Encoder, Json}
+package net.wayfarerx.cf4s.generator
+package code
 
 /**
- * Base type for named components in a template.
+ * Definition of a field that has CloudFormation metadata.
+ *
+ * @param name The capitalized name of this field.
+ * @param fieldType The type of this field.
+ * @param required True if this field is required.
+ * @param documentation The optional documentation link for this field.
  */
-trait Named extends Component:
+case class CodeField(
+  name: String,
+  fieldType: String,
+  required: Boolean = false,
+  documentation: Option[String] = None
+):
 
-  /** The logical name of this component. */
-  def logicalName: String
+  /** The name of this field in code. */
+  lazy val fieldName: String = decapitalize(name)

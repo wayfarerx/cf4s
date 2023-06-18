@@ -1,4 +1,4 @@
-/* CaseClass.scala
+/* CodeObject.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,14 +11,13 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package source
+package code
 
-import model.*
+import cats.data.NonEmptySeq
 
-case class CaseClass(file: CaseClass.File, attributes: Map[Token, Type.Attribute])
-
-object CaseClass:
-
-  type File = Either[Id, Name]
-
-  type Component = Either[Type.Attribute, Property]
+/**
+ * A companion object for a case class.
+ *
+ * @param definitions The definitions associated with the case class.
+ */
+case class CodeObject(definitions: NonEmptySeq[CodeClass])

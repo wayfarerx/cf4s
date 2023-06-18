@@ -254,8 +254,8 @@ object LinkerLive:
         if name.qualifier.isEmpty then
           data.stack collectFirst {
             case Left(id) => id
-            case Right(Name(Some(id), _)) => id
-          } flatMap (id => index get name.copy(qualifier = Some(id)))
+            case Right(Name(id, _)) => id
+          } flatMap (id => index get name.copy(qualifier = id))
         else None
       }
     }

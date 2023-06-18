@@ -46,7 +46,7 @@ case class Parameter[A: Encoder : Parameter.Type](
 
   /* Attempt to render the content of this parameter. */
   override def render: Option[Json] = Entry.render(
-    Entry("Type", summon[Parameter.Type[A]]),
+    Entry("Type", summon[Parameter.Type[A]].name),
     Entry.string("Description", description),
     Entry.option("Default", default),
     Entry.seq("AllowedValues", allowedValues),
@@ -88,14 +88,6 @@ object Parameter:
   object Type:
 
     /**
-     * Returns the given encoder for the specified parameter type.
-     *
-     * @tparam A The runtime type associated with the parameter type.
-     * @return The given encoder for the specified parameter type.
-     */
-    given TypeEncoder[A]: Encoder[Type[A]] = Encoder.encodeString contramap (_.name)
-
-    /**
      * Returns the given parameter type for single numbers.
      *
      * @tparam A The type of number to represent.
@@ -131,4 +123,4 @@ object Parameter:
      * @tparam A The runtime type associated with this parameter type.
      * @param name The name of this parameter type.
      */
-    private final case class Definition[A](name: String) extends Type[A]
+    private case class Definition[A](name: String) extends Type[A]

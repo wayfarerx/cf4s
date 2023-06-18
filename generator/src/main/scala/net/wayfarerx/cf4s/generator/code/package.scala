@@ -1,4 +1,4 @@
-/* Named.scala
+/* package.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -10,14 +10,17 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package net.wayfarerx.cf4s
-
-import io.circe.{Encoder, Json}
+package net.wayfarerx.cf4s.generator
+package code
 
 /**
- * Base type for named components in a template.
+ * Decapitalizes strings that start with exactly one upper-case letter.
+ *
+ * @param string The string to decapitalize.
+ * @return The specified string decapitalized.
  */
-trait Named extends Component:
-
-  /** The logical name of this component. */
-  def logicalName: String
+def decapitalize(string: String): String = string match
+  case str if str.length <= 1 => str.toLowerCase
+  case str => str match
+    case s if s.charAt(0).isUpper && s.charAt(1).isUpper => s
+    case s => s(0).toLower +: s.substring(1)

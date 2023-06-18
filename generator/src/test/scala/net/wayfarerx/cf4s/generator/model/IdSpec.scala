@@ -13,7 +13,6 @@
 package net.wayfarerx.cf4s.generator
 package model
 
-import cats.data.NonEmptySeq
 import zio.test.*
 
 /**
@@ -30,9 +29,12 @@ object IdSpec extends ZIOSpecDefault:
         token2 <- Token fromString "Two"
         id1 <- Id fromString "One"
         id2 <- Id fromString "One::Two"
-        result <- assertTrue(id1 == Id(NonEmptySeq.one(token1))) &&
+        result <- assertTrue(Id.Empty.isEmpty) &&
+          assertTrue(Id.Empty.toString == "") &&
+          assertTrue(!id1.isEmpty) &&
+          assertTrue(id1 == Id(Seq(token1))) &&
           assertTrue(id1.toString == "One") &&
-          assertTrue(id2 == Id(NonEmptySeq.of(token1, token2))) &&
+          assertTrue(id2 == Id(Seq(token1, token2))) &&
           assertTrue(id2.toString == "One::Two")
       yield result
     }

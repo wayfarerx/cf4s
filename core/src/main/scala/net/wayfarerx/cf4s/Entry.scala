@@ -59,8 +59,8 @@ object Entry:
    * Attempts to create an entry from a name and a non-empty sequence of values.
    *
    * @tparam A The type of value to encode.
-   * @param name   The name of the entry to return.
-   * @param seq The non-empty sequence of values to encode in the entry.
+   * @param name The name of the entry to return.
+   * @param seq  The non-empty sequence of values to encode in the entry.
    * @return The result of attempting to create an entry from a name and a non-empty sequence of values.
    */
   def seq[A: Encoder](name: String, seq: Seq[A]): Option[Entry] =

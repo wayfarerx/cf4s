@@ -34,7 +34,7 @@ object LinkerLiveSpec extends ZIOSpecDefault:
             InputProperty("P1", InputType.String, true, "p1")
           )),
           InputPropertyType("PT2", "pt2", Seq(
-            InputProperty("P2", InputType.Defined("PT1"), true, "p2")
+            InputProperty("P2", InputType.Defined("AWS::S3::Bucket.PT1"), true, "p2")
           ))
         ),
         Seq(
