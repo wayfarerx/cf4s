@@ -25,10 +25,10 @@ object TokenSpec extends ZIOSpecDefault:
 
     test("Represents strings that are valid tokens.") {
       for
-        token1 <- Token fromString "aB0_"
-        token2 <- Token fromString "C_1d"
-        result <- assertTrue(token1.value == "aB0_") &&
-          assertTrue(token2.toString == "C_1d")
+        token1 <- Token fromString "aB0"
+        token2 <- Token fromString "C1d"
+        result <- assertTrue(token1.value == "aB0") &&
+          assertTrue(token2.toString == "C1d")
       yield result
     }
 

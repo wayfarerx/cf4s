@@ -15,8 +15,8 @@ package services
 
 import zio.{RIO, Task, ZIO}
 
-import model.*
-import code.*
+import model.Resource
+import output.CodeClass
 
 /**
  * The service that composes classes from model objects.

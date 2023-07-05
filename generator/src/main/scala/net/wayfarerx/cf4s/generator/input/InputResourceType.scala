@@ -36,12 +36,12 @@ case class InputResourceType(
 object InputResourceType:
 
   /** Decodes input resource types from a JSON cursor. */
-  private[input] val decodeAll = decodeEntries { (name, cursor) =>
+  private[input] val decodeAll = decodeEntries { (id, cursor) =>
     for
       documentation <- cursor.downField(`Documentation`).as[String]
       attribute <- cursor.downField(`Attribute`).success.fold(Right(Seq.empty))(InputAttribute.decodeAll)
       attributes <- cursor.downField(`Attributes`).success.fold(Right(Seq.empty))(InputAttribute.decodeAll)
       property <- cursor.downField(`Property`).success.fold(Right(Seq.empty))(InputProperty.decodeAll)
       properties <- cursor.downField(`Properties`).success.fold(Right(Seq.empty))(InputProperty.decodeAll)
-    yield InputResourceType(name, documentation, attribute ++ attributes, property ++ properties)
+    yield InputResourceType(id, documentation, attribute ++ attributes, property ++ properties)
   }

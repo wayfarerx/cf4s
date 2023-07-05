@@ -21,10 +21,10 @@ import zio.Task
  * @param qualifier The qualifier of this name.
  * @param value     The value of this name.
  */
-case class Name(qualifier: Id, value: Token):
+case class Name(qualifier: Option[Id], value: Token):
 
   /* Render this name as a string. */
-  override def toString: String = if qualifier.isEmpty then value.toString else s"$qualifier${Name.Dot}$value"
+  override def toString: String = qualifier.fold(value.toString)(prefix => s"$prefix${Name.Dot}$value")
 
 /**
  * Factory for names.
@@ -45,5 +45,5 @@ object Name:
       for
         qualifier <- Id fromString string.substring(0, index)
         value <- Token fromString string.substring(index + 1)
-      yield Name(qualifier, value)
-    case _ => Token fromString string map (Name(Id.Empty, _))
+      yield Name(Option(qualifier), value)
+    case _ => Token fromString string map (Name(None, _))

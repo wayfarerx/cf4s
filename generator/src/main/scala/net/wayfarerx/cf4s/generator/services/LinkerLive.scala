@@ -78,7 +78,7 @@ object LinkerLive:
           for result <- Linking fail new IllegalArgumentException(s"Duplicate component definition: $key.") yield result
     }
     _ <- Linking.pop
-  yield Resource(id, resourceType.documentation, components)
+  yield Resource(id, components, Option(resourceType.documentation) filterNot (_.isEmpty))
 
   /**
    * Links the input property type found when searching for the specified name.
@@ -95,7 +95,11 @@ object LinkerLive:
         _ <- Linking push inputName
         properties <- linkProperties(input.properties)
         _ <- Linking.pop
-        definition <- Linking define Type.Definition(inputName, input.documentation, properties)
+        definition <- Linking define Type.Definition(
+          inputName,
+          properties,
+          Option(input.documentation) filterNot (_.isEmpty)
+        )
       yield definition
     }(Linking.succeed)
   yield result
@@ -117,7 +121,7 @@ object LinkerLive:
       yield properties + (propertyName -> Property(
         propertyType,
         inputProperty.required,
-        inputProperty.documentation
+        Option(inputProperty.documentation) filterNot (_.isEmpty)
       ))
     }
 
@@ -253,7 +257,7 @@ object LinkerLive:
       index get name orElse {
         if name.qualifier.isEmpty then
           data.stack collectFirst {
-            case Left(id) => id
+            case Left(id) => Option(id)
             case Right(Name(id, _)) => id
           } flatMap (id => index get name.copy(qualifier = id))
         else None

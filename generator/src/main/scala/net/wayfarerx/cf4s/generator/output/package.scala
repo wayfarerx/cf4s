@@ -11,16 +11,15 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package code
+package output
 
 /**
- * Decapitalizes strings that start with exactly one upper-case letter.
+ * Decapitalizes strings that do not start with two upper case letters.
  *
  * @param string The string to decapitalize.
  * @return The specified string decapitalized.
  */
-def decapitalize(string: String): String = string match
+private[output] def decapitalize(string: String): String = string match
   case str if str.length <= 1 => str.toLowerCase
-  case str => str match
-    case s if s.charAt(0).isUpper && s.charAt(1).isUpper => s
-    case s => s(0).toLower +: s.substring(1)
+  case str if str(0).isUpper && str(1).isUpper => str
+  case str => str(0).toLower +: str.substring(1)

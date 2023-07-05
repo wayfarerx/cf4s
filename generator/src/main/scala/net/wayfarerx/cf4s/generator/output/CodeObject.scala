@@ -1,4 +1,4 @@
-/* CodeField.scala
+/* CodeObject.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,22 +11,13 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package code
+package output
+
+import cats.data.NonEmptySeq
 
 /**
- * Definition of a field that has CloudFormation metadata.
+ * A companion object for a case class.
  *
- * @param name The capitalized name of this field.
- * @param fieldType The type of this field.
- * @param required True if this field is required.
- * @param documentation The optional documentation link for this field.
+ * @param definitions The definitions associated with the case class.
  */
-case class CodeField(
-  name: String,
-  fieldType: String,
-  required: Boolean = false,
-  documentation: Option[String] = None
-):
-
-  /** The name of this field in code. */
-  lazy val fieldName: String = decapitalize(name)
+case class CodeObject(definitions: NonEmptySeq[CodeClass])

@@ -31,7 +31,7 @@ final class Token private(val value: String) extends AnyVal:
 object Token:
 
   /** The pattern that token strings must match. */
-  private val Valid = "^([a-zA-Z][a-zA-Z0-9_]*)$".r
+  private val Valid = "^([a-zA-Z][a-zA-Z0-9]*)$".r
 
   /**
    * Attempts to create a token from a string.
@@ -41,4 +41,4 @@ object Token:
    */
   def fromString(string: String): Task[Token] = string match
     case Valid(value) => ZIO succeed Token(value)
-    case invalid => ZIO fail new IllegalArgumentException(s"Invalid token: $invalid.")
+    case invalid => ZIO fail new IllegalArgumentException(s"""Invalid token: "$invalid".""")

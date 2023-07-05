@@ -29,9 +29,9 @@ object NameSpec extends ZIOSpecDefault:
         id <- Id fromString "One::Two"
         name1 <- Name fromString "Three"
         name2 <- Name fromString "One::Two.Three"
-        result <- assertTrue(name1 == Name(Id.Empty, token)) &&
+        result <- assertTrue(name1 == Name(None, token)) &&
           assertTrue(name1.toString == "Three") &&
-          assertTrue(name2 == Name(id, token)) &&
+          assertTrue(name2 == Name(Option(id), token)) &&
           assertTrue(name2.toString == "One::Two.Three")
       yield result
     }

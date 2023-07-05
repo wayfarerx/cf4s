@@ -1,4 +1,4 @@
-/* CodeObject.scala
+/* CodeMethod.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -11,13 +11,17 @@
  */
 
 package net.wayfarerx.cf4s.generator
-package code
-
-import cats.data.NonEmptySeq
+package output
 
 /**
- * A companion object for a case class.
+ * A method that will be defined in code.
  *
- * @param definitions The definitions associated with the case class.
+ * @param name       The capitalized name of this method.
+ * @param methodType The type this method returns.
  */
-case class CodeObject(definitions: NonEmptySeq[CodeClass])
+case class CodeMethod(name: String, methodType: String):
+
+  /** The name of this method in code. */
+  lazy val methodName: String = decapitalize(name)
+
+

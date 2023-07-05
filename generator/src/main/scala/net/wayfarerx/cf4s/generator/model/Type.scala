@@ -86,8 +86,12 @@ object Type:
    * A type definition with properties.
    *
    * @param name          The name of this type.
-   * @param documentation The link to the documentation for this type.
    * @param properties    The properties to define on this type.
+   * @param documentation The optional documentation for this type.
    */
-  case class Definition(name: Name, documentation: String, properties: collection.Map[Token, Property]) extends Item
+  case class Definition(
+    name: Name,
+    properties: collection.immutable.Map[Token, Property],
+    documentation: Option[String] = None
+  ) extends Item
 

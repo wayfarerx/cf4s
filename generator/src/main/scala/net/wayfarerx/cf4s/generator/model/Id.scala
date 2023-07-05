@@ -13,6 +13,8 @@
 package net.wayfarerx.cf4s.generator
 package model
 
+import cats.data.NonEmptySeq
+
 import zio.{Task, ZIO}
 
 
@@ -21,10 +23,7 @@ import zio.{Task, ZIO}
  *
  * @param tokens The the tokens that constitute this ID.
  */
-case class Id(tokens: Seq[Token]):
-
-  /** True if this ID is empty. */
-  def isEmpty: Boolean = tokens.isEmpty
+case class Id(tokens: NonEmptySeq[Token]):
 
   /* Render this ID as a string. */
   override def toString: String = tokens.iterator mkString Id.Delimiter
@@ -33,9 +32,6 @@ case class Id(tokens: Seq[Token]):
  * Factory for IDs.
  */
 object Id:
-
-  /** The empty ID. */
-  val Empty: Id = Id(Seq.empty)
 
   /** The delimiter for ID tokens. */
   private val Delimiter = "::"
@@ -47,7 +43,10 @@ object Id:
    * @return The result of attempting to create an ID from a string.
    */
   def fromString(string: String): Task[Id] = for
-    tokens <- ZIO.foldLeft(string split Delimiter filterNot (_.isEmpty))(Seq.empty[Token]) { (prefix, token) =>
+    seq <- ZIO.foldLeft(string split Delimiter)(Seq.empty[Token]) { (prefix, token) =>
       Token fromString token map (prefix :+ _)
     }
+    tokens <- NonEmptySeq.fromSeq(seq).fold {
+      ZIO fail IllegalArgumentException(s"""Invalid ID: "$string".""")
+    }(ZIO.succeed)
   yield Id(tokens)

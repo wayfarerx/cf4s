@@ -17,11 +17,11 @@ package model
  * Definition of a resource.
  *
  * @param id            The ID of this resource.
- * @param documentation The link to the documentation for this resource.
  * @param components    The attributes and properties of this resource.
+ * @param documentation The optional documentation for this resource.
  */
 case class Resource(
   id: Id,
-  documentation: String,
-  components: Map[Token, Either[Type.Attribute, Property]]
+  components: Map[Token, Either[Type.Attribute, Property]],
+  documentation: Option[String] = None
 )

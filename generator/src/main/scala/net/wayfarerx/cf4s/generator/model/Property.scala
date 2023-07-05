@@ -17,7 +17,7 @@ package model
  * Definition of a property.
  *
  * @param _type         The type of this property.
- * @param required      True if this property is required.
- * @param documentation The link to the documentation for this property.
+ * @param required      True if this property is required, defaults to false.
+ * @param documentation The optional documentation for this property.
  */
-case class Property(_type: Type, required: Boolean, documentation: String)
+case class Property(_type: Type, required: Boolean = false, documentation: Option[String] = None)
