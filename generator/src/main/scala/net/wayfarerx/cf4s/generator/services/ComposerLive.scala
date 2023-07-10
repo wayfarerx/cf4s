@@ -13,8 +13,6 @@
 package net.wayfarerx.cf4s.generator
 package services
 
-import cats.data.StateT
-
 import zio.{Task, ULayer, ZIO, ZLayer}
 
 import model._
@@ -26,18 +24,14 @@ import output._
 case class ComposerLive() extends Composer:
 
   /* Compose classes derived from the specified resources. */
-  override def compose(resources: Seq[Resource]): Task[Seq[CodeClass]] =
-    ZIO.foldLeft(resources)(ComposerLive.Composition())(ComposerLive.compose) map { composition =>
-      composition.properties.values ++ composition.resources.values
-    } map (_.toSeq)
+  override def compose(resources: Seq[Resource]): Task[Seq[OutputClass]] =
+    for (composition <- ZIO.foldLeft(resources)(ComposerLive.Composition())(_ compose _))
+      yield composition.classes.toSeq
 
 /**
  * Factory for composer service implementations.
  */
 object ComposerLive:
-
-  /** The state of the composer while it is composing. */
-  private type Composing[T] = StateT[Task, Composition, T]
 
   /** The layer that provides a composer service implementation. */
   val layer: ULayer[Composer] = ZLayer succeed ComposerLive()
@@ -45,37 +39,41 @@ object ComposerLive:
   /**
    * The state of the composition process.
    *
-   * @param properties The index of top-level properties that have been composed.
-   * @param resources  The index of resources that have been composed.
+   * @param resources The index of resources that have been composed.
+   * @param properties The index of properties that have been composed.
    */
   private case class Composition(
-    properties: Map[Token, CodeClass.Property] = Map.empty,
-    resources: Map[Id, CodeClass.Resource] = Map.empty
-  )
+    resources: Map[Id, OutputClass.Resource] = Map.empty,
+    properties: Map[Name, OutputClass.Property] = Map.empty
+  ) {
 
-  /**
-   * Composes classes for the the specified resource, adding them to the supplied composition.
-   *
-   * @param composition The previous state of the composition.
-   * @param resource    The resource to compose.
-   * @return The next state of the composition.
-   */
-  private def compose(composition: Composition, resource: Resource): Task[Composition] = for {
-    _ <- composition.resources.get(resource.id).fold(ZIO.unit) { _ =>
-      ZIO.fail(new IllegalArgumentException(s"""Cannot compose resource "${resource.id}" more than once."""))
+    /**
+     * Composes classes for the the specified resource, adding them to this composition.
+     *
+     * @param resource The resource to compose.
+     * @return The next state of the composition.
+     */
+    def compose(resource: Resource): Task[Composition] = for {
+      _ <- resources.get(resource.id).fold(ZIO.unit) { _ =>
+        ZIO.fail(new IllegalArgumentException(s"""Cannot compose resource "${resource.id}" more than once."""))
+      }
+      result <- {
+        val start = OutputClass.Resource(
+          resource.id.tokens.last.toString,
+          resource.id.toString,
+          documentation = resource.documentation
+        )
+        //      for {
+        //        fields <- ZIO.foldLeft(resource.)
+        //      }
+        ZIO.unit // FIXME
+      }
+
+    } yield ??? // FIXME
+
+    /** Returns the classes generated in this composition. */
+    def classes: Iterable[OutputClass] = {
+      resources.values ++ properties.view.filterKeys(_.qualifier.isEmpty).values
     }
-    result <- {
-      val start = CodeClass.Resource(
-        resource.id.tokens.last.toString,
-        resource.id.toString,
-        documentation = resource.documentation
-      )
-//      for {
-//        fields <- ZIO.foldLeft(resource.)
-//      }
-      ZIO.unit // FIXME
-    }
 
-  } yield ??? // FIXME
-
-  private def composeField(field: Any): Composing[CodeField] = ???
+  }

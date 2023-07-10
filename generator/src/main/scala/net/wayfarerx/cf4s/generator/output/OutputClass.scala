@@ -1,4 +1,4 @@
-/* CodeClass.scala
+/* OutputClass.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -16,21 +16,12 @@ package output
 /**
  * Base type for classes that will be generated.
  */
-sealed trait CodeClass:
-
-  /** The name of the generated class. */
-  def name: String
-
-  /** The fields this class contains. */
-  def fields: Seq[CodeField]
-
-  /** The optional documentation link for this class. */
-  def documentation: Option[String]
+sealed trait OutputClass
 
 /**
  * Factory for code classes.
  */
-object CodeClass:
+object OutputClass:
 
   /**
    * A property class.
@@ -42,9 +33,9 @@ object CodeClass:
    */
   case class Property(
     name: String,
-    fields: Seq[CodeField] = Seq.empty,
+    fields: Seq[OutputField] = Seq.empty,
     documentation: Option[String] = None
-  ) extends CodeClass
+  ) extends OutputClass
 
   /**
    * A resource class.
@@ -60,8 +51,8 @@ object CodeClass:
   case class Resource(
     name: String,
     _type: String,
-    fields: Seq[CodeField] = Seq.empty,
-    methods: Seq[CodeMethod] = Seq.empty,
-    companion: Option[CodeObject] = None,
+    fields: Seq[OutputField] = Seq.empty,
+    methods: Seq[OutputMethod] = Seq.empty,
+    companion: Option[OutputObject] = None,
     documentation: Option[String] = None
-  ) extends CodeClass
+  ) extends OutputClass

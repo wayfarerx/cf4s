@@ -1,4 +1,4 @@
-/* CodeField.scala
+/* OutputMethod.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -14,19 +14,14 @@ package net.wayfarerx.cf4s.generator
 package output
 
 /**
- * Definition of a field that has CloudFormation metadata.
+ * A method that will be defined in code.
  *
- * @param name The capitalized name of this field.
- * @param fieldType The type of this field.
- * @param required True if this field is required.
- * @param documentation The optional documentation link for this field.
+ * @param name       The capitalized name of this method.
+ * @param methodType The type this method returns.
  */
-case class CodeField(
-  name: String,
-  fieldType: String,
-  required: Boolean = false,
-  documentation: Option[String] = None
-):
+case class OutputMethod(name: String, methodType: String):
 
-  /** The name of this field in code. */
-  lazy val fieldName: String = decapitalize(name)
+  /** The name of this method in code. */
+  lazy val methodName: String = decapitalize(name)
+
+

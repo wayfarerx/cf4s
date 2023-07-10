@@ -16,7 +16,7 @@ package services
 import zio.{RIO, Task, ZIO}
 
 import model.Resource
-import output.CodeClass
+import output.OutputClass
 
 /**
  * The service that composes classes from model objects.
@@ -29,7 +29,7 @@ trait Composer:
    * @param resources The resources to compose case classes from.
    * @return Case classes derived from the specified resources.
    */
-  def compose(resources: Seq[Resource]): Task[Seq[CodeClass]]
+  def compose(resources: Seq[Resource]): Task[Seq[OutputClass]]
 
 /**
  * Accessor for the environment's composer service.
@@ -42,4 +42,4 @@ object Composer:
    * @param resources   The resources to compose case classes from.
    * @return Case classes derived from the specified resources.
    */
-  def compose(resources: Seq[Resource]): RIO[Composer, Seq[CodeClass]] = ZIO serviceWithZIO (_ compose resources)
+  def compose(resources: Seq[Resource]): RIO[Composer, Seq[OutputClass]] = ZIO serviceWithZIO (_ compose resources)

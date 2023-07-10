@@ -1,4 +1,4 @@
-/* CodeObject.scala
+/* OutputObject.scala
  *
  * Copyright (c) 2023 wayfarerx (@x@wayfarerx.net).
  *
@@ -18,6 +18,6 @@ import cats.data.NonEmptySeq
 /**
  * A companion object for a case class.
  *
- * @param definitions The definitions associated with the case class.
+ * @param definitions The property definitions associated with the case class.
  */
-case class CodeObject(definitions: NonEmptySeq[CodeClass])
+case class OutputObject(definitions: NonEmptySeq[OutputClass.Property])
