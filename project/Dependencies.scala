@@ -18,7 +18,7 @@ object Dependencies {
   val ZioVersion = "2.0.13"
   lazy val Zio = ZioGroup %% "zio" % ZioVersion
   lazy val ZioInteropCats = ZioGroup %% "zio-interop-cats" % "23.0.03"
-  lazy val ZioLogging = ZioGroup %% "zio-logging" % "2.1.12"
+  lazy val ZioLogging = ZioGroup %% "zio-logging" % "2.1.13"
 
   // Test Dependencies
 
